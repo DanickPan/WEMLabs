@@ -25,6 +25,10 @@ import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.crawler.WebCrawler;
 import edu.uci.ics.crawler4j.parser.HtmlParseData;
 import edu.uci.ics.crawler4j.url.WebURL;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 /**
  * @author Yasser Ganjisaffar
@@ -49,8 +53,7 @@ public class BasicCrawler extends WebCrawler {
         boolean isBlock = href.startsWith("https://chainz.cryptoid.info/ecc/block.dws");
         boolean isTx = href.startsWith("https://chainz.cryptoid.info/ecc/tx.dws");
         boolean isCryptoBEBlock = href.startsWith("https://cryptobe.com/block");
-        boolean isCryptoBETx = href.startsWith("https://cryptobe.com/tx");
-        return isCryptoBEBlock || isCryptoBETx ;
+        return href.startsWith("https://cryptobe.com/tx");
     }
 
     /**
@@ -80,7 +83,11 @@ public class BasicCrawler extends WebCrawler {
             String text = htmlParseData.getText();
             String html = htmlParseData.getHtml();
             Set<WebURL> links = htmlParseData.getOutgoingUrls();
+            Document doc =   Jsoup.parse(html);
 
+            String content = doc.getElementsByClass("information").text();
+
+            logger.debug(String.valueOf(content));
             logger.debug("Text length: {}", text.length());
             logger.debug("Html length: {}", html.length());
             logger.debug("Number of outgoing links: {}", links.size());

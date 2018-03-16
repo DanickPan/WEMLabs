@@ -70,7 +70,7 @@ public class BasicCrawlController {
      * You can set the maximum number of pages to crawl. The default value
      * is -1 for unlimited number of pages
      */
-        config.setMaxPagesToFetch(10);
+        config.setMaxPagesToFetch(3);
 
         /**
          * Do you want crawler4j to crawl also binary data ?
@@ -110,7 +110,8 @@ public class BasicCrawlController {
      * URLs that are fetched and then the crawler starts following links
      * which are found in these pages
      */
-        controller.addSeed("https://cryptobe.com/chain/E-CurrencyCoin");
+        controller.addSeed("https://cryptobe.com/block/3245c98e04c8010ce5313ad58bc62130cf16ed16c8061955d95315a59dca88cf");
+        //controller.addSeed("https://cryptobe.com/chain/E-CurrencyCoin");
         //controller.addSeed("https://chainz.cryptoid.info/ecc/block.dws?1.htm");
         //controller.addSeed("https://chainz.cryptoid.info/ecc/tx.dws?1.htm");
         //controller.addSeed("http://www.ics.uci.edu/~lopes/");
