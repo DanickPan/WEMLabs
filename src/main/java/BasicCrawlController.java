@@ -64,13 +64,13 @@ public class BasicCrawlController {
      * You can set the maximum crawl depth here. The default value is -1 for
      * unlimited depth
      */
-        config.setMaxDepthOfCrawling(-1);
+        config.setMaxDepthOfCrawling(100);
 
     /*
      * You can set the maximum number of pages to crawl. The default value
      * is -1 for unlimited number of pages
      */
-        config.setMaxPagesToFetch(10000);
+        config.setMaxPagesToFetch(10);
 
         /**
          * Do you want crawler4j to crawl also binary data ?
@@ -102,6 +102,7 @@ public class BasicCrawlController {
         PageFetcher pageFetcher = new PageFetcher(config);
         RobotstxtConfig robotstxtConfig = new RobotstxtConfig();
         RobotstxtServer robotstxtServer = new RobotstxtServer(robotstxtConfig, pageFetcher);
+        robotstxtConfig.setEnabled(false);
         CrawlController controller = new CrawlController(config, pageFetcher, robotstxtServer);
 
     /*
@@ -109,7 +110,9 @@ public class BasicCrawlController {
      * URLs that are fetched and then the crawler starts following links
      * which are found in these pages
      */
-        controller.addSeed("https://fr.wikipedia.org/wiki/Wikip%C3%A9dia:Accueil_principal");
+        controller.addSeed("https://cryptobe.com/chain/E-CurrencyCoin");
+        //controller.addSeed("https://chainz.cryptoid.info/ecc/block.dws?1.htm");
+        //controller.addSeed("https://chainz.cryptoid.info/ecc/tx.dws?1.htm");
         //controller.addSeed("http://www.ics.uci.edu/~lopes/");
         //controller.addSeed("http://www.ics.uci.edu/~welling/");
 

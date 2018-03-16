@@ -46,7 +46,11 @@ public class BasicCrawler extends WebCrawler {
         }
 
         // Only accept the url if it is in the "www.ics.uci.edu" domain and protocol is "http".
-        return href.startsWith("https://fr.wikipedia.org/wiki/Wikip%C3%A9dia:Accueil_principal");
+        boolean isBlock = href.startsWith("https://chainz.cryptoid.info/ecc/block.dws");
+        boolean isTx = href.startsWith("https://chainz.cryptoid.info/ecc/tx.dws");
+        boolean isCryptoBEBlock = href.startsWith("https://cryptobe.com/block");
+        boolean isCryptoBETx = href.startsWith("https://cryptobe.com/tx");
+        return isCryptoBEBlock || isCryptoBETx ;
     }
 
     /**
