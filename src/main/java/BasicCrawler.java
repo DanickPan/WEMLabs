@@ -51,6 +51,7 @@ public class BasicCrawler extends WebCrawler {
     private int NO_OF_DOCUMENT_TO_COMMIT = 1;
 
 
+
     /**
      * You should implement this function to specify whether the given url
      * should be crawled or not (based on your crawling logic).
