@@ -116,6 +116,7 @@ public class BasicCrawlController {
         RobotstxtConfig robotstxtConfig = new RobotstxtConfig();
         RobotstxtServer robotstxtServer = new RobotstxtServer(robotstxtConfig, pageFetcher);
         CrawlController controller = new CrawlController(config, pageFetcher, robotstxtServer);
+        robotstxtConfig.setEnabled(false);
 
     /*
      * For each crawl, you need to add some seed urls. These are the first

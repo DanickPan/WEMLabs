@@ -51,7 +51,8 @@ public class BasicCrawlerEcurrencyCoin extends WebCrawler {
         }
 
         // Only accept the url if it is in the "www.ics.uci.edu" domain and protocol is "http".
-        return href.startsWith("https://cryptobe.com/block/");
+        return href.startsWith("https://cryptobe.com/block");
+        //return href.startsWith("https://cryptobe.com/tx");
     }
 
     /**
