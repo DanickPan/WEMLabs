@@ -15,30 +15,26 @@
  * limitations under the License.
  */
 
-import java.util.Set;
-import java.util.regex.Pattern;
-
-import org.apache.http.Header;
-
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.crawler.WebCrawler;
 import edu.uci.ics.crawler4j.parser.HtmlParseData;
 import edu.uci.ics.crawler4j.url.WebURL;
-
-// jsoup section
-
+import org.apache.http.Header;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.util.Set;
+import java.util.regex.Pattern;
+
+// jsoup section
 
 /**
  * @author Yasser Ganjisaffar
  */
-public class BasicCrawler extends WebCrawler {
+public class BasicCrawlerEcurrencyCoin extends WebCrawler {
 
     private static final Pattern IMAGE_EXTENSIONS = Pattern.compile(".*\\.(bmp|gif|jpg|png)$");
 
@@ -77,10 +73,6 @@ public class BasicCrawler extends WebCrawler {
         logger.debug("Docid: {}", docid);
         logger.info("URL: {}", url);
         logger.debug("Domain: '{}'", domain);
-        /*logger.debug("Sub-domain: '{}'", subDomain);
-        logger.debug("Path: '{}'", path);
-        logger.debug("Parent page: {}", parentUrl);
-        logger.debug("Anchor text: {}", anchor);*/
 
         if (page.getParseData() instanceof HtmlParseData) {
             HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
@@ -88,8 +80,6 @@ public class BasicCrawler extends WebCrawler {
             String html = htmlParseData.getHtml();
             Set<WebURL> links = htmlParseData.getOutgoingUrls();
 
-            // logger.debug("Text length: {}", text.length());
-            // logger.debug("Html length: {}", html.length());
             logger.debug("Number of outgoing links: {}", links.size());
         }
 
@@ -111,9 +101,9 @@ public class BasicCrawler extends WebCrawler {
 
         logger.info(doc.title());
 
-        // Get block number
-        doc.select("h2[style='margin-top:0']").select("span").remove();
-        String block_num = doc.selectFirst("h2[style='margin-top:0']").unwrap().toString();
+        // Get informations html
+        logger.info("PAGE info:\n" + doc.select("p.information").toString());
+        /*String block_num = doc.selectFirst("h2[style='margin-top:0']").unwrap().toString();
         block_num = block_num.substring(block_num.length() -1, block_num.length());
         // Get hash
         String hash = doc.selectFirst("td > code").unwrap().toString();
@@ -137,9 +127,10 @@ public class BasicCrawler extends WebCrawler {
 
         // Start to parse all transaction for a given block
         // Elements block_transactions = doc.select("div.active > tbody > tr[tx-id]");
-        Elements block_transactions = doc.select("div");
+        Elements block_transactions = doc.select("div");*/
 
-        logger.info("DATA INFO: " + block_transactions.toString());
+
+       /* logger.info("DATA INFO: " + block_transactions.toString());
         for (Element transaction : block_transactions) {
             String transaction_hash = transaction.selectFirst("a[href] > code").toString();
             logger.info("Transaction hash: " + transaction_hash);
@@ -152,7 +143,7 @@ public class BasicCrawler extends WebCrawler {
         logger.info("Value out: " + value_out);
         logger.info("Difficulty: " + difficulty);
         logger.info("Outstanding value: " + outstanding);
-        logger.info("Created on : " + created);
+        logger.info("Created on : " + created);*/
 
         logger.debug("======================================================================\n\n");
     }

@@ -24,6 +24,7 @@ import edu.uci.ics.crawler4j.fetcher.PageFetcher;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
 
+
 /**
  * @author Yasser Ganjisaffar
  */
@@ -37,6 +38,7 @@ public class BasicCrawlController {
             logger.info("\t numberOfCralwers (number of concurrent threads)");
             return;
         }
+
 
     /*
      * crawlStorageFolder is a folder where intermediate crawl data is
@@ -55,16 +57,27 @@ public class BasicCrawlController {
         config.setCrawlStorageFolder(crawlStorageFolder);
 
     /*
+     * Add little docs related to the following parameters
+     */
+        config.setUserAgentString("crawler4j/WEM/2018");
+        config.setMaxConnectionsPerHost(10);
+        config.setConnectionTimeout(4000);
+        config.setSocketTimeout(5000);
+    /*
+     * Include https pages
+     */
+        config.setIncludeHttpsPages(true);
+    /*
      * Be polite: Make sure that we don't send more than 1 request per
      * second (1000 milliseconds between requests).
      */
-        config.setPolitenessDelay(250);
+        config.setPolitenessDelay(500);
 
     /*
      * You can set the maximum crawl depth here. The default value is -1 for
      * unlimited depth
      */
-        config.setMaxDepthOfCrawling(10);
+        config.setMaxDepthOfCrawling(8);
 
     /*
      * You can set the maximum number of pages to crawl. The default value
@@ -102,7 +115,6 @@ public class BasicCrawlController {
         PageFetcher pageFetcher = new PageFetcher(config);
         RobotstxtConfig robotstxtConfig = new RobotstxtConfig();
         RobotstxtServer robotstxtServer = new RobotstxtServer(robotstxtConfig, pageFetcher);
-        robotstxtConfig.setEnabled(false);
         CrawlController controller = new CrawlController(config, pageFetcher, robotstxtServer);
 
     /*
@@ -110,10 +122,9 @@ public class BasicCrawlController {
      * URLs that are fetched and then the crawler starts following links
      * which are found in these pages
      */
-        controller.addSeed("https://cryptobe.com/block/3245c98e04c8010ce5313ad58bc62130cf16ed16c8061955d95315a59dca88cf");
-        //controller.addSeed("https://cryptobe.com/chain/E-CurrencyCoin");
+        controller.addSeed("https://cryptobe.com/block/");
+        // controller.addSeed("https://cryptobe.com/tx/");
         //controller.addSeed("https://chainz.cryptoid.info/ecc/block.dws?1.htm");
-        //controller.addSeed("https://chainz.cryptoid.info/ecc/tx.dws?1.htm");
         //controller.addSeed("http://www.ics.uci.edu/~lopes/");
         //controller.addSeed("http://www.ics.uci.edu/~welling/");
 
@@ -121,6 +132,6 @@ public class BasicCrawlController {
      * Start the crawl. This is a blocking operation, meaning that your code
      * will reach the line after this only when crawling is finished.
      */
-        controller.start(BasicCrawler.class, numberOfCrawlers);
+        controller.start(BasicCrawlerEcurrencyCoin.class, numberOfCrawlers);
     }
 }
