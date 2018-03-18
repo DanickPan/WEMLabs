@@ -42,6 +42,7 @@ public class BasicCrawler extends WebCrawler {
 
     private static final Pattern IMAGE_EXTENSIONS = Pattern.compile(".*\\.(bmp|gif|jpg|png)$");
 
+
     /**
      * You should implement this function to specify whether the given url
      * should be crawled or not (based on your crawling logic).
