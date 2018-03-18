@@ -15,25 +15,28 @@
  * limitations under the License.
  */
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Pattern;
 
 import org.apache.http.Header;
+
 
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.crawler.WebCrawler;
 import edu.uci.ics.crawler4j.parser.HtmlParseData;
 import edu.uci.ics.crawler4j.url.WebURL;
-
-// jsoup section
-
+import org.apache.solr.client.solrj.SolrClient;
+import org.apache.solr.client.solrj.impl.HttpSolrClient;
+import org.apache.solr.common.SolrInputDocument;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
 
-import java.io.IOException;
+//import org.apache.solr.client.solrj;
 
 /**
  * @author Yasser Ganjisaffar
@@ -41,6 +44,12 @@ import java.io.IOException;
 public class BasicCrawler extends WebCrawler {
 
     private static final Pattern IMAGE_EXTENSIONS = Pattern.compile(".*\\.(bmp|gif|jpg|png)$");
+    String urlString = "http://localhost:8983/solr/mycore";
+    SolrClient solr = new HttpSolrClient.Builder(urlString).build();
+    private List<SolrInputDocument> documentsIndexed = new CopyOnWriteArrayList<SolrInputDocument>();
+
+    private int NO_OF_DOCUMENT_TO_COMMIT = 1;
+
 
     /**
      * You should implement this function to specify whether the given url
@@ -55,7 +64,10 @@ public class BasicCrawler extends WebCrawler {
         }
 
         // Only accept the url if it is in the "www.ics.uci.edu" domain and protocol is "http".
-        return href.startsWith("https://chainz.cryptoid.info/ecc/block.dws?");
+        boolean isBlock = href.startsWith("https://chainz.cryptoid.info/ecc/block.dws");
+        boolean isTx = href.startsWith("https://chainz.cryptoid.info/ecc/tx.dws");
+        boolean isCryptoBEBlock = href.startsWith("https://cryptobe.com/block");
+        return href.startsWith("https://cryptobe.com/tx");
     }
 
     /**
@@ -64,8 +76,6 @@ public class BasicCrawler extends WebCrawler {
      */
     @Override
     public void visit(Page page) {
-
-        // We're probably remove this section because we're using jSoup
         int docid = page.getWebURL().getDocid();
         String url = page.getWebURL().getURL();
         String domain = page.getWebURL().getDomain();
@@ -75,86 +85,63 @@ public class BasicCrawler extends WebCrawler {
         String anchor = page.getWebURL().getAnchor();
 
         logger.debug("Docid: {}", docid);
-        logger.info("URL: {}", url);
+        /*logger.info("URL: {}", url);
         logger.debug("Domain: '{}'", domain);
-        logger.debug("Sub-domain: '{}'", subDomain);
-        logger.debug("Path: '{}'", path);
+        logger.debug("Sub-domain: '{}'", subDomain);*/
+        logger.debug("Path: '{}'", path);/*
         logger.debug("Parent page: {}", parentUrl);
         logger.debug("Anchor text: {}", anchor);
-
+*/
         if (page.getParseData() instanceof HtmlParseData) {
             HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
             String text = htmlParseData.getText();
             String html = htmlParseData.getHtml();
             Set<WebURL> links = htmlParseData.getOutgoingUrls();
+            Document doc =   Jsoup.parse(html);
+            SolrInputDocument doSolrInputDocument = new SolrInputDocument();
 
-            logger.debug("Text length: {}", text.length());
+            String content = doc.getElementsByClass("information").text();
+
+            String array[] = content.split(" ");
+            logger.debug("ARRAY:");
+            logger.debug(Arrays.toString(array));
+            doSolrInputDocument.setField("id", page.hashCode());
+            doSolrInputDocument.setField("hash", array[1]);
+            logger.debug(array[1]); // hash
+            doSolrInputDocument.setField("block", array[5]);
+            logger.debug(array[5]); // block
+            doSolrInputDocument.setField("date", array[6]);
+            logger.debug(array[6]); // date
+            doSolrInputDocument.setField("time", array[7]);
+            logger.debug(array[7]); // time
+            //doSolrInputDocument.setField("totalIn", array[17]);
+            logger.debug(array[17]); // total in
+            doSolrInputDocument.setField("outputs", array[21]);
+            logger.debug(array[21]); // #outputs
+/*            logger.debug("Text length: {}", text.length());
             logger.debug("Html length: {}", html.length());
-            logger.debug("Number of outgoing links: {}", links.size());
+            logger.debug("Number of outgoing links: {}", links.size());*/
+
+            documentsIndexed.add(doSolrInputDocument);
+            try {
+                solr.add(doSolrInputDocument);
+
+                solr.commit(true, true);
+            } catch(Exception e) {
+                System.out.println(e.getMessage());
+                e.printStackTrace();
+            }
         }
 
         Header[] responseHeaders = page.getFetchResponseHeaders();
         if (responseHeaders != null) {
-            logger.debug("Response headers:");
+            //logger.debug("Response headers:");
             for (Header header : responseHeaders) {
-                logger.debug("\t{}: {}", header.getName(), header.getValue());
+                //logger.debug("\t{}: {}", header.getName(), header.getValue());
             }
         }
 
-        // ---------------------------------- jSOup section to parse the data --------------------------------------- //
-        Document doc = null;
-        try {
-            doc = Jsoup.connect(url).get();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
-        logger.info(doc.title());
-
-        // Get block number
-        doc.select("h2[style='margin-top:0']").select("span").remove();
-        String block_num = doc.selectFirst("h2[style='margin-top:0']").unwrap().toString();
-        block_num = block_num.substring(block_num.length() -1, block_num.length());
-        // Get hash
-        String hash = doc.selectFirst("td > code").unwrap().toString();
-        // Get datetime
-        String datetime = doc.selectFirst("td:matches((\\d{4})-(\\d{2})-(\\d{2}) (\\d{2}):(\\d{2}):(\\d{2}))")
-                          .unwrap().toString();
-        // Get Transaction number to check
-        doc.selectFirst("td:contains(Transactions) + td").selectFirst("span").remove();
-        String transaction_count = doc.selectFirst("td:contains(Transactions) + td").unwrap().toString();
-        // Get value out
-        doc.selectFirst("td:contains(Value Out) + td.amount").selectFirst("small").remove();
-        String value_out = doc.selectFirst("td:contains(Value Out) + td.amount").unwrap().toString().replace(",", "");
-        // Get difficulty
-        String difficulty = doc.selectFirst("td:contains(Difficulty) + td").unwrap().toString();
-        // Get Outstanding
-        doc.selectFirst("td:contains(Outstanding) + td.amount").selectFirst("small").remove();
-        String outstanding = doc.selectFirst("td:contains(Outstanding) + td.amount").unwrap().toString().replace(",", "");
-        // Get created
-        doc.selectFirst("td:has(b) + td").selectFirst("small").remove();
-        String created = doc.selectFirst("td:has(b) + td").unwrap().toString().replace(",", "");
-
-        // Start to parse all transaction for a given block
-        // Elements block_transactions = doc.select("div.active > tbody > tr[tx-id]");
-        Elements block_transactions = doc.select("div");
-
-        logger.info("DATA INFO: " + block_transactions.toString());
-        for (Element transaction : block_transactions) {
-            String transaction_hash = transaction.selectFirst("a[href] > code").toString();
-            logger.info("Transaction hash: " + transaction_hash);
-        }
-
-        logger.info("Block number: " + block_num);
-        logger.info("Hash code: " + hash);
-        logger.info("Datetime: " + datetime);
-        logger.info("Transaction counter: " + transaction_count);
-        logger.info("Value out: " + value_out);
-        logger.info("Difficulty: " + difficulty);
-        logger.info("Outstanding value: " + outstanding);
-        logger.info("Created on : " + created);
-
-        logger.debug("======================================================================\n\n");
+        logger.debug("=============");
     }
-    
 }
