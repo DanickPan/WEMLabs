@@ -71,13 +71,13 @@ public class BasicCrawlController {
      * Be polite: Make sure that we don't send more than 1 request per
      * second (1000 milliseconds between requests).
      */
-        config.setPolitenessDelay(500);
+        config.setPolitenessDelay(250);
 
     /*
      * You can set the maximum crawl depth here. The default value is -1 for
      * unlimited depth
      */
-        config.setMaxDepthOfCrawling(8);
+        config.setMaxDepthOfCrawling(10);
 
     /*
      * You can set the maximum number of pages to crawl. The default value
@@ -122,7 +122,8 @@ public class BasicCrawlController {
      * URLs that are fetched and then the crawler starts following links
      * which are found in these pages
      */
-        controller.addSeed("https://cryptobe.com/block/");
+        controller.addSeed("https://cryptobe.com/block/3245c98e04c8010ce5313ad58bc62130cf16ed16c8061955d95315a59dca88cf");
+        // controller.addSeed("https://cryptobe.com/block/");
         // controller.addSeed("https://cryptobe.com/tx/");
         //controller.addSeed("https://chainz.cryptoid.info/ecc/block.dws?1.htm");
         //controller.addSeed("http://www.ics.uci.edu/~lopes/");
