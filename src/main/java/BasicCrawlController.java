@@ -134,6 +134,6 @@ public class BasicCrawlController {
      * Start the crawl. This is a blocking operation, meaning that your code
      * will reach the line after this only when crawling is finished.
      */
-        controller.start(BasicCrawlerEcurrencyCoin.class, numberOfCrawlers);
+        controller.start(BasicCrawlerEcurrencyCoinBlock.class, numberOfCrawlers);
     }
 }
