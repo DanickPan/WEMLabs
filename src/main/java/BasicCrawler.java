@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -29,6 +30,7 @@ import edu.uci.ics.crawler4j.crawler.WebCrawler;
 import edu.uci.ics.crawler4j.parser.HtmlParseData;
 import edu.uci.ics.crawler4j.url.WebURL;
 import org.apache.solr.client.solrj.SolrClient;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.common.SolrInputDocument;
 import org.jsoup.Jsoup;
@@ -36,7 +38,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-//import org.apache.solr.client.solrj;
+import java.io.IOException;
 
 /**
  * @author Yasser Ganjisaffar
@@ -44,7 +46,7 @@ import org.jsoup.select.Elements;
 public class BasicCrawler extends WebCrawler {
 
     private static final Pattern IMAGE_EXTENSIONS = Pattern.compile(".*\\.(bmp|gif|jpg|png)$");
-    String urlString = "http://localhost:8983/solr/mycore";
+    String urlString = "http://localhost:8983/solr/testCore_01";
     SolrClient solr = new HttpSolrClient.Builder(urlString).build();
     private List<SolrInputDocument> documentsIndexed = new CopyOnWriteArrayList<SolrInputDocument>();
 
@@ -98,39 +100,48 @@ public class BasicCrawler extends WebCrawler {
             String html = htmlParseData.getHtml();
             Set<WebURL> links = htmlParseData.getOutgoingUrls();
             Document doc =   Jsoup.parse(html);
-            SolrInputDocument doSolrInputDocument = new SolrInputDocument();
+            SolrInputDocument docSolrInputDocument = new SolrInputDocument();
 
             String content = doc.getElementsByClass("information").text();
 
             String array[] = content.split(" ");
             logger.debug("ARRAY:");
             logger.debug(Arrays.toString(array));
-            doSolrInputDocument.setField("id", page.hashCode());
-            doSolrInputDocument.setField("hash", array[1]);
+            docSolrInputDocument.addField("cat", "book");
+            //docSolrInputDocument.setField("id", page.hashCode());
+            //docSolrInputDocument.setField("hash", array[1]);
             logger.debug(array[1]); // hash
-            doSolrInputDocument.setField("block", array[5]);
+            //docSolrInputDocument.setField("block", array[5]);
             logger.debug(array[5]); // block
-            doSolrInputDocument.setField("date", array[6]);
+            //docSolrInputDocument.setField("date", array[6]);
             logger.debug(array[6]); // date
-            doSolrInputDocument.setField("time", array[7]);
+            //docSolrInputDocument.setField("time", array[7]);
             logger.debug(array[7]); // time
-            //doSolrInputDocument.setField("totalIn", array[17]);
+            //docSolrInputDocument.setField("totalIn", array[17]);
             logger.debug(array[17]); // total in
-            doSolrInputDocument.setField("outputs", array[21]);
+            //docSolrInputDocument.setField("outputs", array[21]);
             logger.debug(array[21]); // #outputs
 /*            logger.debug("Text length: {}", text.length());
             logger.debug("Html length: {}", html.length());
             logger.debug("Number of outgoing links: {}", links.size());*/
 
-            documentsIndexed.add(doSolrInputDocument);
+            documentsIndexed.add(docSolrInputDocument);
             try {
-                solr.add(doSolrInputDocument);
+                solr.add(docSolrInputDocument);
 
                 solr.commit(true, true);
             } catch(Exception e) {
                 System.out.println(e.getMessage());
                 e.printStackTrace();
             }
+        }
+
+        try {
+            solr.commit(true, true);
+        } catch (SolrServerException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         Header[] responseHeaders = page.getFetchResponseHeaders();

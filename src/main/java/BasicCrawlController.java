@@ -122,5 +122,8 @@ public class BasicCrawlController {
      * will reach the line after this only when crawling is finished.
      */
         controller.start(BasicCrawler.class, numberOfCrawlers);
+
+        // To test connection to Solr
+        // SolrjPopulator.populate();
     }
 }
