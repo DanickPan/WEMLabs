@@ -123,8 +123,8 @@ public class BasicCrawlController {
      * URLs that are fetched and then the crawler starts following links
      * which are found in these pages
      */
-        // controller.addSeed("https://cryptobe.com/block/3245c98e04c8010ce5313ad58bc62130cf16ed16c8061955d95315a59dca88cf");
-        controller.addSeed("https://cryptobe.com/tx/e8c20e8aaf9db2288247eda3e147bba900cbd0625cb79c00ccfa5f0134d0c1f2");
+        controller.addSeed("https://cryptobe.com/block/3245c98e04c8010ce5313ad58bc62130cf16ed16c8061955d95315a59dca88cf");
+        //controller.addSeed("https://cryptobe.com/tx/e8c20e8aaf9db2288247eda3e147bba900cbd0625cb79c00ccfa5f0134d0c1f2");
         // controller.addSeed("https://cryptobe.com/block/");
         // controller.addSeed("https://cryptobe.com/tx/");
         //controller.addSeed("https://chainz.cryptoid.info/ecc/block.dws?1.htm");
@@ -135,6 +135,6 @@ public class BasicCrawlController {
      * Start the crawl. This is a blocking operation, meaning that your code
      * will reach the line after this only when crawling is finished.
      */
-        controller.start(BasicCrawlerEcurrencyCoinTransactions.class, numberOfCrawlers);
+        controller.start(BasicCrawlerEcurrencyCoinBlock.class, numberOfCrawlers);
     }
 }

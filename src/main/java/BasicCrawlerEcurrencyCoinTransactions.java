@@ -35,12 +35,20 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.solr.client.solrj.SolrClient;
+import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.impl.HttpSolrClient;
+import org.apache.solr.common.SolrInputDocument;
+
+import java.io.IOException;
+
 /**
  * @author Yasser Ganjisaffar
  */
     public class BasicCrawlerEcurrencyCoinTransactions extends WebCrawler {
 
         private static final Pattern IMAGE_EXTENSIONS = Pattern.compile(".*\\.(bmp|gif|jpg|png)$");
+
 
         /**
          * You should implement this function to specify whether the given url
@@ -106,6 +114,7 @@ import java.util.regex.Pattern;
 
             logger.info(doc.title());
 
+
             // Get informations html
             String page_content_infos = doc.select("p.information").text().toString();
             //String content = doc.getElementsByClass("information").text();
@@ -124,6 +133,9 @@ import java.util.regex.Pattern;
             String total_out = array[27].toString();
             String size = array[29].toString() + " " + array[30].toString();
             String transaction_fee = array[32].toString();
+
+
+
 
             // Get the transactions
             Elements html_tables = doc.select("table");

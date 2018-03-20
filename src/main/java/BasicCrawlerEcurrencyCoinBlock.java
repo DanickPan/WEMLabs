@@ -20,6 +20,10 @@ import edu.uci.ics.crawler4j.crawler.WebCrawler;
 import edu.uci.ics.crawler4j.parser.HtmlParseData;
 import edu.uci.ics.crawler4j.url.WebURL;
 import org.apache.http.Header;
+import org.apache.solr.client.solrj.SolrClient;
+import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.impl.HttpSolrClient;
+import org.apache.solr.common.SolrInputDocument;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -40,6 +44,8 @@ import java.util.regex.Pattern;
 public class BasicCrawlerEcurrencyCoinBlock extends WebCrawler {
 
     private static final Pattern IMAGE_EXTENSIONS = Pattern.compile(".*\\.(bmp|gif|jpg|png)$");
+    final String solrUrl = "http://localhost:8983/solr/mytestcore/";
+
 
     /**
      * You should implement this function to specify whether the given url
@@ -103,6 +109,9 @@ public class BasicCrawlerEcurrencyCoinBlock extends WebCrawler {
             e.printStackTrace();
         }
 
+        SolrClient client = new HttpSolrClient.Builder(solrUrl).withConnectionTimeout(10000).withSocketTimeout(60000).build();
+
+
         logger.info(doc.title());
 
         // Get informations html
@@ -131,6 +140,34 @@ public class BasicCrawlerEcurrencyCoinBlock extends WebCrawler {
         String coin_days_destroyed = array[47].toString();
         String cumulative_coin_days_destroyed = array[51].toString();
 
+        SolrInputDocument solr_doc = new SolrInputDocument();
+        solr_doc.setField("hash", hash_block);
+        solr_doc.setField("block_num", block_num);
+        solr_doc.setField("version", version);
+        solr_doc.setField("transaction_merkle_root", transac_merkle_root);
+        solr_doc.setField("timestamps", timestamp);
+        solr_doc.setField("datetime", datetime);
+        solr_doc.setField("difficulty", difficulty);
+        solr_doc.setField("cumulative_difficulty", cumulative_difficulty);
+        solr_doc.setField("nonce", nonce);
+        solr_doc.setField("how_much_transaction", how_much_transaction);
+        solr_doc.setField("value_out", cumulative_difficulty);
+        solr_doc.setField("block_fee", block_fee);
+        solr_doc.setField("avg_coin_out", avg_coin_age);
+        solr_doc.setField("coin_days_destroyed", coin_days_destroyed);
+        solr_doc.setField("cumulative_coin_days_destroyed", cumulative_coin_days_destroyed);
+
+
+
+
+        try {
+            client.add(solr_doc);
+            client.commit();
+        } catch (SolrServerException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         // Get the transactions
         Elements transactions = doc.select("tr");
 
