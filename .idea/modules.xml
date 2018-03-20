@@ -5,7 +5,6 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/WEMLab1.iml" filepath="$PROJECT_DIR$/.idea/modules/WEMLab1.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/WEMLab1_main.iml" filepath="$PROJECT_DIR$/.idea/modules/WEMLab1_main.iml" group="WEMLab1" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/WEMLab1_test.iml" filepath="$PROJECT_DIR$/.idea/modules/WEMLab1_test.iml" group="WEMLab1" />
-      <module fileurl="file://$PROJECT_DIR$/WEM_Lab1.iml" filepath="$PROJECT_DIR$/WEM_Lab1.iml" />
     </modules>
   </component>
 </project>

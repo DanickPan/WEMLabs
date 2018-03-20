@@ -18,6 +18,7 @@ public class Block
 
     public Block()
     {
+
     }
 
     public String getHash_block() {

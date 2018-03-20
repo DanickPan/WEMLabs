@@ -56,9 +56,14 @@ public class Controller
          */
         controller.start(EcurrencyTransactionsCrawler.class, numberOfCrawlers);
 
-        SolrDocumentList datas = solrjPop.query("*");
-        for(int i = 0; i< datas.size() ; i++)
+        SolrDocumentList allDatas = solrjPop.query("hashBlock:c32dd*");
+        for(int i = 0; i< allDatas.size() ; i++)
         {
+            System.out.println(allDatas.get(i));
+        }
+
+        SolrDocumentList datas = solrjPop.query("type:Transaction");
+        for(int i = 0; i< datas.size() ; i++) {
             System.out.println(datas.get(i));
         }
     }
