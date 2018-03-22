@@ -47,11 +47,14 @@ public class Controller
          */
         controller.start(EcurrencyTransactionsCrawler.class, numberOfCrawlers);
 
-        SolrDocumentList allDatas = solrjPop.query("hashBlock:c32dd*");
+        // Perform queries
+        // List all transactions with an amount greater than 1'000'000
+        SolrDocumentList allDatas = solrjPop.query("fq=from_amout:[1000000 TO *]");
         for (SolrDocument allData : allDatas) {
             System.out.println(allData);
         }
 
+        // List all records of type transaction
         SolrDocumentList datas = solrjPop.query("type:Transaction");
         for (SolrDocument data : datas) {
             System.out.println(data);
