@@ -10,12 +10,12 @@ import java.io.IOException;
 
 public class SolrjPopulator
 {
-    SolrClient client;
-    final String solrUrl = "http://localhost:8983/solr/core3/";
+    private SolrClient client;
 
     private SolrjPopulator()
     {
         //client !!Warning : core must be created !!
+        String solrUrl = "http://localhost:8983/solr/core3/";
         client = new HttpSolrClient.Builder(solrUrl).withConnectionTimeout(10000).withSocketTimeout(60000).build();
     }
 
@@ -43,9 +43,7 @@ public class SolrjPopulator
 
         try {
             client.add(solr_doc);
-        } catch (SolrServerException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (SolrServerException | IOException e) {
             e.printStackTrace();
         }
 
@@ -75,22 +73,19 @@ public class SolrjPopulator
 
         try {
             client.add(solr_doc);
-        } catch (SolrServerException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (SolrServerException | IOException e) {
             e.printStackTrace();
         }
 
         commit();
     }
-    public void commit()
+
+    private void commit()
     {
         //apply client changes
         try {
             client.commit();
-        } catch (SolrServerException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (SolrServerException | IOException e) {
             e.printStackTrace();
         }
     }
@@ -102,11 +97,10 @@ public class SolrjPopulator
         QueryResponse response = null;
         try {
             response = client.query(params);
-        } catch (SolrServerException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (SolrServerException | IOException e) {
             e.printStackTrace();
         }
+        assert response != null;
         return response.getResults();
     }
 }
