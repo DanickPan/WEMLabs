@@ -11,7 +11,7 @@ import java.io.IOException;
 public class SolrjPopulator
 {
     SolrClient client;
-    final String solrUrl = "http://localhost:8983/solr/mytestcore/";
+    final String solrUrl = "http://localhost:8983/solr/core3/";
 
     private SolrjPopulator()
     {
